@@ -1,3 +1,6 @@
+
+*This repo is a fork of jpalardy/vim-slime the sends lines to vimterminal and neovim terminal in "chunks" rather than 1 lines at at time when sending multiple lines.*
+
 vim-slime
 =========
 
