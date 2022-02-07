@@ -119,7 +119,17 @@ function! s:NeovimSend(config, text)
   " iPython %cpaste (input buffering: not all lines sent over)
   " So this s:WritePasteFile can help as a small lock & delay
   call s:WritePasteFile(a:text)
-  call chansend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
+  if len(split(a:text,'\n\zs')) != 1
+    for l in split(a:text,'\n\zs')
+      let subbed_l=substitute(l,'\n',"\<C-v>\<C-j>",'')
+      let subbed_l=substitute(subbed_l,'\r',"\<C-v>\<C-j>",'')
+      call chansend(str2nr(a:config["jobid"]),subbed_l)
+    endfor
+      call chansend(str2nr(a:config["jobid"]),"\<c-j>")
+   else 
+    call chansend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
+  endif
+
   " if b:slime_config is {"jobid": ""} and not configured
   " then unset it for automatic configuration next time
   if b:slime_config["jobid"]  == ""
