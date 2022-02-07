@@ -120,12 +120,12 @@ function! s:NeovimSend(config, text)
   " So this s:WritePasteFile can help as a small lock & delay
   call s:WritePasteFile(a:text)
   if len(split(a:text,'\n\zs')) != 1
+    call chansend(str2nr(a:config["jobid"),["%cpaste","\<C-j>"])
+    sleep 1m
     for l in split(a:text,'\n\zs')
-      let subbed_l=substitute(l,'\n',"\<C-v>\<C-j>",'')
-      let subbed_l=substitute(subbed_l,'\r',"\<C-v>\<C-j>",'')
-      call chansend(str2nr(a:config["jobid"]),subbed_l)
+      call chansend(str2nr(a:config["jobid"]),[l,"\r"])
     endfor
-      call chansend(str2nr(a:config["jobid"]),"\<c-j>")
+    call chansend(str2nr(a:config["jobid"]),["--","\r"])
    else 
     call chansend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
   endif
